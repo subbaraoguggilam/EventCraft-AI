@@ -118,21 +118,21 @@ export const CreateEventPage: React.FC = () => {
                   {[
                     {
                       id: 'wedding' as EventType,
-                      title: 'Wedding',
+                      title: 'Wedding / Shaadi',
                       emoji: '💍',
-                      desc: 'Ceremony, reception, rehearsals & floral',
+                      desc: 'Haldi, Mehendi, Sangeet, Mandap & Royal Feast',
                     },
                     {
                       id: 'birthday' as EventType,
-                      title: 'Birthday',
+                      title: 'Birthday / Janmadin',
                       emoji: '🎂',
-                      desc: 'Milestone parties, custom cake & DJ entertainment',
+                      desc: '1st Birthday Annaprashan, Milestones & DJ parties',
                     },
                     {
                       id: 'community' as EventType,
-                      title: 'Community',
+                      title: 'Utsav & Community',
                       emoji: '🏘️',
-                      desc: 'Festivals, charity runs, street food fairs',
+                      desc: 'Diwali Mela, Dandiya Raas & Society Cultural Days',
                     },
                   ].map((card) => {
                     const isSelected = eventType === card.id
@@ -170,10 +170,10 @@ export const CreateEventPage: React.FC = () => {
                 label="Celebration Title"
                 placeholder={
                   eventType === 'wedding'
-                    ? "e.g. Maya & Leo's Vineyard Wedding"
+                    ? "e.g. Aarav & Ananya's Royal Udaipur Vivaah"
                     : eventType === 'birthday'
-                    ? "e.g. Liam's 10th Superhero Birthday Bash"
-                    : 'e.g. Annual Riverside Spring Community Gala'
+                    ? "e.g. Rohan's 1st Birthday & Annaprashan Ceremony"
+                    : 'e.g. Greenwood Park Grand Diwali Mela & Dandiya Utsav'
                 }
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -202,7 +202,7 @@ export const CreateEventPage: React.FC = () => {
 
                 <Input
                   label="Venue Location"
-                  placeholder="e.g. Sunset Garden Manor, Civic Park"
+                  placeholder="e.g. The Oberoi Udaivilas, Udaipur / Taj Palace, Mumbai"
                   value={venue}
                   onChange={(e) => setVenue(e.target.value)}
                   leftIcon={<MapPin className="w-4 h-4" />}
@@ -214,7 +214,7 @@ export const CreateEventPage: React.FC = () => {
                   label="Expected Guest Count"
                   type="number"
                   min="1"
-                  placeholder="e.g. 75"
+                  placeholder="e.g. 250"
                   value={guestCount}
                   onChange={(e) => setGuestCount(e.target.value)}
                   leftIcon={<Users className="w-4 h-4" />}
@@ -222,11 +222,11 @@ export const CreateEventPage: React.FC = () => {
                 />
 
                 <Input
-                  label="Total Budget ($ USD)"
+                  label="Total Budget (₹ INR)"
                   type="number"
                   min="0"
                   step="any"
-                  placeholder="e.g. 15000"
+                  placeholder="e.g. 1500000"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
                   leftIcon={<DollarSign className="w-4 h-4" />}
@@ -236,12 +236,12 @@ export const CreateEventPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vision, Themes & Preferences (for AI Grounding)
+                  Vision, Themes & Traditions (for AI Grounding)
                 </label>
                 <textarea
                   rows={3}
                   className="block w-full rounded-lg border border-gray-300 text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                  placeholder="e.g. Bohemian rustic theme, pastel florals, vegan catering options, acoustic guitar live set..."
+                  placeholder="e.g. Royal Rajasthani theme, yellow marigold Haldi decor, live chaat & jalebi counter, Punjabi Dhol Baraat entry..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />

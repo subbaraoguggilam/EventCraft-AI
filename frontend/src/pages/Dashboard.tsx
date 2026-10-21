@@ -4,6 +4,7 @@ import { Plus, Calendar, DollarSign, Sparkles, Filter } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Event } from '../types'
 import { eventsApi, getErrorMessage } from '../services/api'
+import { formatINR } from '../utils/currency'
 import { useAuth } from '../hooks/useAuth'
 import Navbar from '../components/Layout/Navbar'
 import EventCard from '../components/Events/EventCard'
@@ -84,10 +85,10 @@ export const Dashboard: React.FC = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                Total Budget
+                Total Budget (₹)
               </p>
               <p className="text-2xl font-bold text-gray-900 mt-0.5">
-                ${totalBudgetPlanned.toLocaleString()}
+                {formatINR(totalBudgetPlanned)}
               </p>
             </div>
           </div>
@@ -117,9 +118,9 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
             {[
               { id: 'all', label: 'All Celebrations' },
-              { id: 'wedding', label: '💍 Weddings' },
-              { id: 'birthday', label: '🎂 Birthdays' },
-              { id: 'community', label: '🏘️ Community' },
+              { id: 'wedding', label: '💍 Shaadi / Weddings' },
+              { id: 'birthday', label: '🎂 Janmadin / Birthdays' },
+              { id: 'community', label: '🏘️ Utsavs / Melas' },
             ].map((f) => (
               <button
                 key={f.id}

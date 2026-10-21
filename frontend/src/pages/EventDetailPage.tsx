@@ -13,6 +13,7 @@ import {
 import toast from 'react-hot-toast'
 import type { Event, BudgetItem, TimelineItem, VendorItem } from '../types'
 import { eventsApi, budgetApi, timelineApi, vendorsApi, getErrorMessage } from '../services/api'
+import { formatINR } from '../utils/currency'
 import Navbar from '../components/Layout/Navbar'
 import Sidebar from '../components/Layout/Sidebar'
 import BudgetTab from '../components/Budget/BudgetTab'
@@ -128,7 +129,7 @@ export const EventDetailPage: React.FC = () => {
   }
 
   const formattedDate = event.date
-    ? new Date(event.date).toLocaleDateString('en-US', {
+    ? new Date(event.date).toLocaleDateString('en-IN', {
         weekday: 'short',
         month: 'long',
         day: 'numeric',
@@ -207,7 +208,7 @@ export const EventDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span className="font-semibold text-gray-900">
-                  ${(event.budget || (event as any).total_budget || 0).toLocaleString()} Budget
+                  {formatINR(event.budget || (event as any).total_budget)} Target Budget
                 </span>
               </div>
             </div>

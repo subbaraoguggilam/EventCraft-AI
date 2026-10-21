@@ -91,10 +91,10 @@ export const ChatPage: React.FC = () => {
   }
 
   const suggestedPrompts = [
-    'How should I divide my budget across venue and catering?',
-    'Give me 3 unique entertainment ideas tailored for my guest count.',
-    'What key tasks must be completed 30 days before this celebration?',
-    'Write a welcoming email invitation draft for my guests.',
+    'How should I divide my budget across Mandap venue and Maharaj catering?',
+    'Give me 3 unique entertainment & Sangeet ideas for 250 guests in Rajasthan.',
+    'What key tasks must be completed 30 days before the wedding muhurat?',
+    'Write a welcoming WhatsApp message and Lagan Patrika invite for my guests.',
   ]
 
   return (

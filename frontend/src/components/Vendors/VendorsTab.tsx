@@ -3,6 +3,7 @@ import { Plus, Sparkles, Trash2, Mail, Phone, DollarSign, Users } from 'lucide-r
 import toast from 'react-hot-toast'
 import type { VendorItem, CreateVendorPayload, VendorStatus, VendorType } from '../../types'
 import { vendorsApi, getErrorMessage } from '../../services/api'
+import { formatINR } from '../../utils/currency'
 import Button from '../Common/Button'
 import Input from '../Common/Input'
 import Modal from '../Common/Modal'
@@ -238,7 +239,7 @@ export const VendorsTab: React.FC<VendorsTabProps> = ({ eventId, items, onRefres
                       {vendorPrice != null && (
                         <div className="flex items-center gap-2 font-medium text-gray-900">
                           <DollarSign className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          <span>Quoted: ${vendorPrice.toLocaleString()}</span>
+                          <span>Quoted: {formatINR(vendorPrice)}</span>
                         </div>
                       )}
                     </div>
@@ -282,7 +283,7 @@ export const VendorsTab: React.FC<VendorsTabProps> = ({ eventId, items, onRefres
         <form onSubmit={handleCreateVendor} className="space-y-4">
           <Input
             label="Vendor / Company Name"
-            placeholder="e.g. Blossom Florals, Chef Mario Catering"
+            placeholder="e.g. Royal Maharaj Caterers, Genda Phool Decorators"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -296,13 +297,13 @@ export const VendorsTab: React.FC<VendorsTabProps> = ({ eventId, items, onRefres
                 onChange={(e) => setVendorType(e.target.value as VendorType)}
                 className="block w-full rounded-lg border border-gray-300 text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
               >
-                <option value="catering">Catering</option>
-                <option value="photography">Photography</option>
-                <option value="venue">Venue</option>
-                <option value="music">Music / DJ</option>
-                <option value="decoration">Decoration & Flowers</option>
-                <option value="transportation">Transportation</option>
-                <option value="other">Other</option>
+                <option value="catering">Catering (Halwai & Sweets)</option>
+                <option value="photography">Candid Photography & Drone</option>
+                <option value="venue">Banquet / Resort Lawn</option>
+                <option value="music">Live Dhol & Bollywood DJ</option>
+                <option value="decoration">Mandap & Floral Décor</option>
+                <option value="transportation">Baraat Horse / Vintage Car</option>
+                <option value="other">Mehendi Artist / Pandit Ji / Other</option>
               </select>
             </div>
 
@@ -324,25 +325,25 @@ export const VendorsTab: React.FC<VendorsTabProps> = ({ eventId, items, onRefres
             <Input
               label="Contact Email"
               type="email"
-              placeholder="vendor@example.com"
+              placeholder="vendor@company.in"
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
             />
 
             <Input
               label="Contact Phone"
-              placeholder="(555) 123-4567"
+              placeholder="+91 98765 43210"
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
             />
           </div>
 
           <Input
-            label="Quoted / Estimated Price ($)"
+            label="Quoted / Estimated Price (₹)"
             type="number"
             min="0"
             step="any"
-            placeholder="0.00"
+            placeholder="e.g. 75000"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />

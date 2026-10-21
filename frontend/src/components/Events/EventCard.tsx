@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Users, DollarSign, ArrowRight } from 'lucide-react'
 import type { Event } from '../../types'
+import { formatINR } from '../../utils/currency'
 import Badge from '../Common/Badge'
 
 export interface EventCardProps {
@@ -23,7 +24,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   }
 
   const formattedDate = event.date
-    ? new Date(event.date).toLocaleDateString('en-US', {
+    ? new Date(event.date).toLocaleDateString('en-IN', {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -70,7 +71,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
 
           <div className="flex items-center gap-1.5">
             <DollarSign className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-            <span>{event.budget ? `$${event.budget.toLocaleString()}` : 'Budget TBD'}</span>
+            <span>{event.budget ? formatINR(event.budget) : 'Budget TBD'}</span>
           </div>
         </div>
       </div>

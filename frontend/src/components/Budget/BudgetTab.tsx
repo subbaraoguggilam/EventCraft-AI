@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import toast from 'react-hot-toast'
 import type { BudgetItem, CreateBudgetItemPayload } from '../../types'
 import { budgetApi, getErrorMessage } from '../../services/api'
+import { formatINR } from '../../utils/currency'
 import Button from '../Common/Button'
 import Input from '../Common/Input'
 import Modal from '../Common/Modal'
@@ -17,14 +18,18 @@ export interface BudgetTabProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
+  'Venue & Lawns': '#6366f1',
+  'Catering & Sweets': '#ec4899',
+  'Mandap & Floral Décor': '#f59e0b',
+  'Photography & Film': '#8b5cf6',
+  'Music, Dhol & DJ': '#10b981',
+  'Attire & Mehendi': '#f43f5e',
+  'Pooja & Rituals': '#eab308',
   Venue: '#6366f1',
   Catering: '#ec4899',
-  'Photography/Videography': '#8b5cf6',
-  Photography: '#8b5cf6',
-  Entertainment: '#f59e0b',
   Decorations: '#10b981',
-  Floral: '#14b8a6',
-  Audio: '#3b82f6',
+  Entertainment: '#f59e0b',
+  Photography: '#8b5cf6',
   Other: '#64748b',
 }
 
@@ -41,7 +46,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Form State
-  const [category, setCategory] = useState('Venue')
+  const [category, setCategory] = useState('Venue & Lawns')
   const [name, setName] = useState('')
   const [estimatedCost, setEstimatedCost] = useState('')
   const [actualCost, setActualCost] = useState('')
@@ -58,8 +63,8 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
     return acc
   }, {})
 
-  const chartData = Object.entries(categoryData).map(([name, value]) => ({
-    name,
+  const chartData = Object.entries(categoryData).map(([catName, value]) => ({
+    name: catName,
     value: Math.round(value),
   }))
 
@@ -67,7 +72,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
     try {
       setIsGenerating(true)
       await budgetApi.generate(eventId)
-      toast.success('AI budget generated!')
+      toast.success('AI budget generated in ₹ (INR)!')
       onRefresh()
     } catch (err) {
       toast.error(getErrorMessage(err))
@@ -79,7 +84,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
   const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
-      toast.error('Please enter an item name')
+      toast.error('Please enter an expense title')
       return
     }
 
@@ -131,9 +136,9 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
       {/* Top Banner & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Budget Tracker</h2>
+          <h2 className="text-lg font-bold text-gray-900">Budget Tracker (₹ INR)</h2>
           <p className="text-xs text-gray-500 mt-1">
-            Track allocations, payments, and actual costs in real-time.
+            Track allocations, advances, vendor payments, and balances in Indian Rupees.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -144,14 +149,14 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
             onClick={handleGenerateBudget}
             isLoading={isGenerating}
           >
-            Auto-Allocate with AI
+            Auto-Allocate with AI (₹)
           </Button>
           <Button
             size="sm"
             leftIcon={<Plus className="w-4 h-4" />}
             onClick={() => setIsAddModalOpen(true)}
           >
-            Add Item
+            Add Expense
           </Button>
         </div>
       </div>
@@ -163,7 +168,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
             Total Target
           </p>
           <p className="text-xl font-bold text-gray-900 mt-1">
-            ${(totalBudget || totalEstimated).toLocaleString()}
+            {formatINR(totalBudget || totalEstimated)}
           </p>
         </div>
 
@@ -172,29 +177,29 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
             Estimated Cost
           </p>
           <p className="text-xl font-bold text-indigo-600 mt-1">
-            ${totalEstimated.toLocaleString()}
+            {formatINR(totalEstimated)}
           </p>
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Actual Spent
+            Actual Spent / Paid
           </p>
           <p className="text-xl font-bold text-gray-900 mt-1">
-            ${totalActual.toLocaleString()}
+            {formatINR(totalActual)}
           </p>
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Remaining Budget
+            Remaining Balance
           </p>
           <p
             className={`text-xl font-bold mt-1 ${
               remaining < 0 ? 'text-rose-600' : 'text-emerald-600'
             }`}
           >
-            ${remaining.toLocaleString()}
+            {formatINR(remaining)}
           </p>
         </div>
       </div>
@@ -202,7 +207,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
       {/* Visual Chart & Breakdown */}
       {chartData.length > 0 && (
         <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Spend by Category</h3>
+          <h3 className="text-sm font-semibold text-gray-800 mb-4">Spend by Category (₹)</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -223,7 +228,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(val: number) => [`$${val.toLocaleString()}`, 'Amount']}
+                  formatter={(val: number) => [formatINR(val), 'Amount']}
                 />
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
@@ -243,8 +248,8 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
             <EmptyState
               icon={<AlertCircle className="w-8 h-8" />}
               title="No budget items yet"
-              description="Start tracking expenses by adding an item or click Auto-Allocate with AI to generate a smart plan."
-              actionLabel="Add Item"
+              description="Start tracking expenses by adding an item or click Auto-Allocate with AI to generate a smart plan in ₹ INR."
+              actionLabel="Add Expense"
               onAction={() => setIsAddModalOpen(true)}
             />
           </div>
@@ -254,7 +259,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
               <thead className="bg-gray-50/75 text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100">
                 <tr>
                   <th className="px-6 py-3 font-semibold">Status</th>
-                  <th className="px-6 py-3 font-semibold">Item</th>
+                  <th className="px-6 py-3 font-semibold">Item & Description</th>
                   <th className="px-6 py-3 font-semibold">Category</th>
                   <th className="px-6 py-3 font-semibold text-right">Estimated</th>
                   <th className="px-6 py-3 font-semibold text-right">Actual</th>
@@ -289,10 +294,10 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right font-medium text-gray-700">
-                      ${(item.estimated_cost || 0).toLocaleString()}
+                      {formatINR(item.estimated_cost)}
                     </td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">
-                      {item.actual_cost != null ? `$${item.actual_cost.toLocaleString()}` : '—'}
+                      {item.actual_cost != null ? formatINR(item.actual_cost) : '—'}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
@@ -315,13 +320,13 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Add Budget Expense"
-        description="Add an expected expense or actual receipt."
+        title="Add Expense (₹ INR)"
+        description="Add an expected expense or actual vendor advance."
       >
         <form onSubmit={handleCreateItem} className="space-y-4">
           <Input
-            label="Item Description"
-            placeholder="e.g. Venue Deposit, DJ sound setup"
+            label="Expense Description"
+            placeholder="e.g. Mandap Floral Advance, Halwai advance, Dhol booking"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -334,29 +339,30 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
               onChange={(e) => setCategory(e.target.value)}
               className="block w-full rounded-lg border border-gray-300 text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             >
-              <option value="Venue">Venue</option>
-              <option value="Catering">Catering</option>
-              <option value="Photography">Photography/Videography</option>
-              <option value="Entertainment">Entertainment / Music</option>
-              <option value="Decorations">Decorations & Flowers</option>
-              <option value="Transportation">Transportation</option>
+              <option value="Venue & Lawns">Venue & Lawns (Mandap / Hall)</option>
+              <option value="Catering & Sweets">Catering & Sweets (Halwai / Buffet)</option>
+              <option value="Photography & Film">Photography & Cinematic Film</option>
+              <option value="Mandap & Floral Décor">Mandap & Floral Décor (Genda Phool)</option>
+              <option value="Music, Dhol & DJ">Music, Punjabi Dhol & DJ</option>
+              <option value="Attire & Mehendi">Attire, Mehendi & Makeup</option>
+              <option value="Pooja & Rituals">Pooja & Rituals (Pandit Ji / Samagri)</option>
               <option value="Other">Other</option>
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <Input
-              label="Estimated Cost ($)"
+              label="Estimated Cost (₹)"
               type="number"
               min="0"
               step="any"
-              placeholder="0.00"
+              placeholder="e.g. 50000"
               value={estimatedCost}
               onChange={(e) => setEstimatedCost(e.target.value)}
               required
             />
             <Input
-              label="Actual Cost ($)"
+              label="Actual Cost (₹)"
               type="number"
               min="0"
               step="any"
@@ -375,7 +381,7 @@ export const BudgetTab: React.FC<BudgetTabProps> = ({
               className="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4 border-gray-300"
             />
             <label htmlFor="is-paid-checkbox" className="text-sm font-medium text-gray-700">
-              Already paid
+              Already paid / Advance given
             </label>
           </div>
 

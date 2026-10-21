@@ -1,8 +1,8 @@
 """
 AI Service — wraps the Google Generative AI (Gemini) SDK.
 
-All public methods return sensible fallback data when the API key is missing
-or the API call fails, so the rest of the application keeps working.
+Tailored for Indian celebrations (Weddings, Birthdays, Community Festivals)
+using INR (₹) and Indian cultural traditions.
 """
 from __future__ import annotations
 
@@ -52,7 +52,6 @@ def _safe_json(text: str) -> Any:
     try:
         return json.loads(text)
     except json.JSONDecodeError:
-        # Try to find JSON object/array embedded in prose
         import re
 
         match = re.search(r"(\{.*\}|\[.*\])", text, re.DOTALL)
@@ -65,28 +64,76 @@ def _safe_json(text: str) -> Any:
 
 
 # ---------------------------------------------------------------------------
-# Fallback data
+# Indian Fallback data
 # ---------------------------------------------------------------------------
 
 def _fallback_ideas(event_type: str) -> Dict[str, Any]:
     defaults = {
         "wedding": {
-            "themes": ["Garden Romance", "Rustic Elegance", "Modern Minimalist"],
-            "decorations": ["Floral arches", "String lights", "Candle centerpieces"],
-            "food": ["3-course plated dinner", "Cocktail hour appetisers", "Wedding cake"],
-            "entertainment": ["Live band", "DJ", "Photo booth"],
+            "themes": [
+                "Royal Rajasthani Heritage",
+                "Pastel Floral Garden Vivaah",
+                "Vibrant Bollywood Sangeet & Mehendi",
+            ],
+            "decorations": [
+                "Marigold (Genda Phool) & Jasmine floral mandap",
+                "Brass Urli with floating petals & diyas",
+                "Fairy lights canopy with colourful silk drapes",
+            ],
+            "food": [
+                "Live Chaat, Dosa & Tandoori counters",
+                "Royal Mughlai & North Indian Dal Makhani buffet",
+                "Assorted Mithai & Kulfi dessert bar",
+            ],
+            "entertainment": [
+                "Live Punjabi Dhol & Bollywood DJ",
+                "Mehendi & Sangeet dance choreography",
+                "360-degree video selfie booth",
+            ],
         },
         "birthday": {
-            "themes": ["Tropical Luau", "Hollywood Glam", "Vintage Retro"],
-            "decorations": ["Balloon garlands", "Photo wall", "Themed centrepieces"],
-            "food": ["Dessert table", "Buffet stations", "Personalised cake"],
-            "entertainment": ["DJ", "Games area", "Karaoke"],
+            "themes": [
+                "Bollywood Retro Disco",
+                "Desi Mela & Carnival",
+                "Royal Prince / Princess Theme",
+            ],
+            "decorations": [
+                "Balloon arch with fairy lights & marigold accents",
+                "Personalized photo milestone cutout wall",
+                "Floral entrance arch",
+            ],
+            "food": [
+                "Paneer & Chicken Tikka starter platters",
+                "Dum Biryani & Gulab Jamun dessert",
+                "Customized tiered designer cake",
+            ],
+            "entertainment": [
+                "DJ with high-energy dance tracks",
+                "Magic show & interactive party host",
+                "Face painting & instant photo prints",
+            ],
         },
         "community": {
-            "themes": ["Cultural Festival", "Green & Sustainable", "Town Fair"],
-            "decorations": ["Banner displays", "Community artwork", "Nature elements"],
-            "food": ["Food trucks", "Community potluck", "Local vendor stalls"],
-            "entertainment": ["Live performances", "Interactive workshops", "Sports activities"],
+            "themes": [
+                "Grand Diwali Mela & Dandiya Raas",
+                "Ganesh Utsav Cultural Mahotsav",
+                "Holi Milan & Spring Community Mela",
+            ],
+            "decorations": [
+                "Intricate Rangoli & flower petal carpets",
+                "Shamiana with traditional cloth hangings & torans",
+                "Eco-friendly paper lanterns & fairy lights",
+            ],
+            "food": [
+                "Mahaprasad & traditional community feast",
+                "Regional street food & sweet stalls",
+                "Cutting Chai & Samosa hospitality counters",
+            ],
+            "entertainment": [
+                "Live Garba & Dandiya orchestra",
+                "Society talent showcase, dance & drama skits",
+                "Antakshari & musical evening",
+            ],
         },
     }
     return defaults.get(event_type, defaults["community"])
@@ -95,29 +142,29 @@ def _fallback_ideas(event_type: str) -> Dict[str, Any]:
 def _fallback_budget(total_budget: float, event_type: str) -> List[Dict[str, Any]]:
     allocations = {
         "wedding": [
-            ("Venue", 0.30),
-            ("Catering", 0.35),
-            ("Photography/Videography", 0.10),
-            ("Flowers & Décor", 0.08),
-            ("Music & Entertainment", 0.07),
-            ("Attire", 0.05),
-            ("Miscellaneous", 0.05),
+            ("Mandap, Lawn & Venue", 0.30),
+            ("Catering & Sweet Counters", 0.35),
+            ("Candid Photography & Cinematography", 0.10),
+            ("Floral & Lighting Décor", 0.10),
+            ("Dhol, DJ & Sangeet Sound", 0.05),
+            ("Bridal Attire & Makeup", 0.05),
+            ("Pooja Samagri & Miscellaneous", 0.05),
         ],
         "birthday": [
-            ("Venue", 0.25),
-            ("Catering & Cake", 0.35),
-            ("Decorations", 0.15),
-            ("Entertainment", 0.15),
-            ("Invitations & Favours", 0.05),
+            ("Banquet Hall / Club House", 0.25),
+            ("Catering, Snacks & Cake", 0.35),
+            ("Theme Decorations & Balloons", 0.15),
+            ("DJ / Magic Show & Games", 0.15),
+            ("Return Gifts & Digital Invites", 0.05),
             ("Miscellaneous", 0.05),
         ],
         "community": [
-            ("Venue & Permits", 0.20),
-            ("Food & Beverages", 0.30),
-            ("Entertainment", 0.20),
-            ("Marketing & Promotion", 0.10),
-            ("Equipment & Supplies", 0.15),
-            ("Miscellaneous", 0.05),
+            ("Ground / Stage & Shamiana", 0.25),
+            ("Food Stalls & Refreshments", 0.30),
+            ("Sound System, DJ & Lighting", 0.20),
+            ("Banners, Prizes & Marketing", 0.10),
+            ("Security & Cleaning Staff", 0.10),
+            ("Pooja & Cultural Rituals", 0.05),
         ],
     }
     cats = allocations.get(event_type, allocations["community"])
@@ -130,14 +177,14 @@ def _fallback_budget(total_budget: float, event_type: str) -> List[Dict[str, Any
 def _fallback_timeline(event_date: Optional[datetime], event_type: str) -> List[Dict[str, Any]]:
     base = event_date or datetime.utcnow() + timedelta(days=90)
     items = [
-        (90, "Initial Planning", "Define goals, budget, and guest list", "high", "Planning"),
-        (75, "Venue Booking", "Research and book the venue", "high", "Venue"),
-        (60, "Send Invitations", "Send out invitations to guests", "high", "Guests"),
-        (45, "Vendor Contracts", "Finalise all vendor agreements", "high", "Vendors"),
-        (30, "Menu Finalisation", "Confirm catering menu", "medium", "Catering"),
-        (14, "Final Guest Count", "Confirm headcount with caterer", "medium", "Guests"),
-        (7, "Final Walkthrough", "Walk through all arrangements", "high", "Logistics"),
-        (1, "Day-Before Check", "Confirm all vendors and logistics", "high", "Logistics"),
+        (90, "Muhurat & Date Finalization", "Finalize auspicious date with family and astrologer", "high", "Planning"),
+        (75, "Book Venue & Banquet Lawn", "Reserve venue in Udaipur / Jaipur / Bangalore / Mumbai", "high", "Venue"),
+        (60, "Send E-Invites & Lagan Patrika", "Distribute printed invitation cards & WhatsApp video invites", "high", "Invitations"),
+        (45, "Finalize Catering & Sweet Boxes", "Menu tasting for North Indian, Chaat & Mithai selection", "high", "Catering"),
+        (30, "Sangeet Dance Practice & Outfits", "Choreography sessions for family performances and outfit trials", "medium", "Attire"),
+        (15, "Mehendi & Makeup Confirmation", "Confirm bridal makeup artist and Mehendi team timings", "high", "Beauty"),
+        (3, "Mandap & Haldi Stage Setup", "Verify floral decor, sound check, and Haldi yellow theme", "high", "Decor"),
+        (0, "Celebration Day & Baraat Welcome", "Dhol arrival, Baraat swagat, Mandap rituals, and dinner reception", "high", "Execution"),
     ]
     return [
         {
@@ -154,26 +201,28 @@ def _fallback_timeline(event_date: Optional[datetime], event_type: str) -> List[
 
 def _fallback_vendors(event_type: str) -> List[Dict[str, Any]]:
     common = [
-        {"vendor_type": "Venue", "status": "pending"},
-        {"vendor_type": "Catering", "status": "pending"},
-        {"vendor_type": "Photography", "status": "pending"},
-        {"vendor_type": "Florist / Décor", "status": "pending"},
+        {"vendor_type": "Banquet / Resort Venue", "status": "pending"},
+        {"vendor_type": "Traditional & Modern Catering", "status": "pending"},
+        {"vendor_type": "Candid Photography & Drone", "status": "pending"},
+        {"vendor_type": "Mandap & Floral Decorator", "status": "pending"},
     ]
     extras = {
         "wedding": [
-            {"vendor_type": "Wedding Planner", "status": "pending"},
-            {"vendor_type": "DJ / Band", "status": "pending"},
-            {"vendor_type": "Officiant", "status": "pending"},
-            {"vendor_type": "Hair & Makeup", "status": "pending"},
+            {"vendor_type": "Punjabi Dhol & DJ", "status": "pending"},
+            {"vendor_type": "Bridal Mehendi Artist", "status": "pending"},
+            {"vendor_type": "Pandit Ji / Priest", "status": "pending"},
+            {"vendor_type": "Bridal Makeup & Hair Stylist", "status": "pending"},
+            {"vendor_type": "Sangeet Choreographer", "status": "pending"},
         ],
         "birthday": [
-            {"vendor_type": "DJ / Entertainer", "status": "pending"},
-            {"vendor_type": "Cake Baker", "status": "pending"},
+            {"vendor_type": "DJ & Sound System", "status": "pending"},
+            {"vendor_type": "Custom Theme Cake Baker", "status": "pending"},
+            {"vendor_type": "Kids Magic Show & Host", "status": "pending"},
         ],
         "community": [
-            {"vendor_type": "Sound System / AV", "status": "pending"},
-            {"vendor_type": "Security", "status": "pending"},
-            {"vendor_type": "Event MC", "status": "pending"},
+            {"vendor_type": "Shamiana & Stage Setup", "status": "pending"},
+            {"vendor_type": "Live Orchestra / Dandiya Troupe", "status": "pending"},
+            {"vendor_type": "Security & Gate Management", "status": "pending"},
         ],
     }
     return common + extras.get(event_type, [])
@@ -184,11 +233,7 @@ def _fallback_vendors(event_type: str) -> List[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 class AIService:
-    """Gemini-powered AI helpers for the event planning assistant."""
-
-    # ------------------------------------------------------------------
-    # Public helpers
-    # ------------------------------------------------------------------
+    """Gemini-powered AI helpers for Indian celebration planning."""
 
     def generate_event_ideas(
         self,
@@ -197,18 +242,18 @@ class AIService:
         budget: Optional[float],
         preferences: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Return theme ideas, decorations, food, and entertainment suggestions."""
+        """Return theme ideas, decorations, food, and entertainment tailored to Indian customs."""
         model = _get_model()
         if model is None:
             return _fallback_ideas(event_type)
 
         prompt = (
-            f"You are a creative event planner. Generate ideas for a {event_type} event "
-            f"with approximately {guest_count or 'unknown'} guests and a budget of "
-            f"${budget or 'unknown'}. "
-            + (f"Additional preferences: {preferences}. " if preferences else "")
+            f"You are an expert Indian celebration and event planner. Generate ideas for a {event_type} in India "
+            f"with approximately {guest_count or '150'} guests and a budget of ₹{budget or '5,00,000'}. "
+            f"Consider rich Indian traditions (Sangeet, Haldi, Mehendi, Pooja, Festive Melas, Indian cuisines). "
+            + (f"User preferences: {preferences}. " if preferences else "")
             + "Return ONLY a JSON object with keys: themes (list of strings), "
-            "decorations (list), food (list), entertainment (list). "
+            "decorations (list of strings), food (list of strings), entertainment (list of strings). "
             "No extra text."
         )
         try:
@@ -226,17 +271,19 @@ class AIService:
         total_budget: float,
         guest_count: Optional[int],
     ) -> List[Dict[str, Any]]:
-        """Return a list of budget category dicts with estimated_cost."""
+        """Return a list of budget category dicts with estimated_cost in INR (₹)."""
         model = _get_model()
         if model is None:
             return _fallback_budget(total_budget, event_type)
 
         prompt = (
-            f"You are a financial event planner. Allocate a ${total_budget:.2f} budget "
-            f"for a {event_type} with {guest_count or 'unknown'} guests. "
+            f"You are an expert Indian wedding and event financial planner. Allocate a ₹{total_budget:.2f} budget "
+            f"for a {event_type} in India with {guest_count or '150'} guests. "
+            "Include typical Indian categories like Venue/Lawn, Catering/Mithai, Mandap/Floral Decor, "
+            "Photography, DJ/Dhol, Attire, and Pooja/Rituals. "
             "Return ONLY a JSON array where each element has keys: "
             "category (string), name (string), estimated_cost (number), notes (string). "
-            "Make costs sum close to the total budget. No extra text."
+            "Make costs sum close to the total budget in INR. No extra text."
         )
         try:
             response = model.generate_content(prompt)
@@ -253,15 +300,17 @@ class AIService:
         event_date: Optional[datetime],
         guest_count: Optional[int],
     ) -> List[Dict[str, Any]]:
-        """Return a planning timeline as a list of milestone dicts."""
+        """Return planning timeline milestones in an Indian event context."""
         model = _get_model()
         if model is None:
             return _fallback_timeline(event_date, event_type)
 
         date_str = event_date.strftime("%Y-%m-%d") if event_date else "TBD"
         prompt = (
-            f"You are an expert event coordinator. Create a planning timeline for a "
-            f"{event_type} event on {date_str} with {guest_count or 'unknown'} guests. "
+            f"You are a premier Indian event planner. Create a step-by-step planning timeline for an Indian "
+            f"{event_type} scheduled for {date_str} with {guest_count or '150'} guests. "
+            "Include Indian celebration milestones like Muhurat, Sangeet dance practice, Mehendi artist booking, "
+            "Lagan Patrika / Invitation distribution, and Haldi prep. "
             "Return ONLY a JSON array where each element has keys: "
             "title (string), description (string), due_date (ISO 8601 string), "
             "priority (one of: high/medium/low), category (string), is_completed (false). "
@@ -282,15 +331,16 @@ class AIService:
         guest_count: Optional[int],
         budget: Optional[float],
     ) -> List[Dict[str, Any]]:
-        """Return a list of vendor dicts to source for the event."""
+        """Return Indian vendor checklist (Catering/Halwai, Mandap, Dhol/DJ, Mehendi, Pandit Ji)."""
         model = _get_model()
         if model is None:
             return _fallback_vendors(event_type)
 
         prompt = (
-            f"You are an event procurement specialist. List the vendors needed for a "
-            f"{event_type} event with {guest_count or 'unknown'} guests and a "
-            f"${budget or 'unknown'} budget. "
+            f"You are an Indian event coordinator. List the vendors needed for an Indian "
+            f"{event_type} with {guest_count or '150'} guests and a budget of ₹{budget or '5,00,000'}. "
+            "Include vendors like Banquet/Resort, Catering/Halwai, Candid Photographer, Mandap Decorator, "
+            "Dhol/DJ, Mehendi Artist, Pandit Ji / Officiant. "
             "Return ONLY a JSON array where each element has keys: "
             "vendor_type (string), vendor_name (null), contact_email (null), "
             "contact_phone (null), quoted_price (null), status ('pending'), notes (string). "
@@ -307,59 +357,57 @@ class AIService:
 
     def chat(self, messages: List[Dict[str, str]], event_context: Dict[str, Any]) -> str:
         """
-        Context-aware conversational assistant.
-
-        *messages* is a list of {"role": "user"|"assistant", "content": "..."} dicts.
-        *event_context* provides event details used to ground the assistant.
+        Context-aware conversational assistant tailored for Indian celebrations.
         """
         model = _get_model()
 
-        # Build system context text
-        ctx_lines = ["You are a helpful AI event planning assistant."]
+        ctx_lines = [
+            "You are an expert Indian celebration and event planning assistant.",
+            "You help users organize Indian Weddings (Shaadi, Sangeet, Mehendi, Haldi), "
+            "Birthdays (Janmadin, Annaprashan, Milestones), and Community Events (Diwali Mela, Dandiya Raas, Ganesh Utsav).",
+            "Always use Indian Rupees (₹ / INR) for budgets and prices.",
+            "Provide culturally rich, practical, warm, and creative Indian advice."
+        ]
         if event_context:
             ctx_lines.append(
-                f"\nCurrent event context:\n"
+                f"\nCurrent celebration context:\n"
                 f"- Title: {event_context.get('title', 'N/A')}\n"
                 f"- Type: {event_context.get('event_type', 'N/A')}\n"
                 f"- Date: {event_context.get('event_date', 'N/A')}\n"
                 f"- Venue: {event_context.get('venue', 'N/A')}\n"
                 f"- Guest count: {event_context.get('guest_count', 'N/A')}\n"
-                f"- Total budget: ${event_context.get('total_budget', 'N/A')}\n"
+                f"- Total budget: ₹{event_context.get('total_budget', 'N/A')}\n"
                 f"- Description: {event_context.get('description', 'N/A')}"
             )
-        ctx_lines.append(
-            "\nAnswer questions, offer suggestions, and help the user plan their event. "
-            "Be concise, friendly, and practical."
-        )
         system_ctx = "\n".join(ctx_lines)
 
         if model is None:
             last_user_msg = next(
                 (m["content"] for m in reversed(messages) if m.get("role") == "user"),
-                "Hello",
+                "Namaste",
             )
             return (
-                f"I'm your event planning assistant! (AI responses are unavailable — "
-                f"please set a valid GEMINI_API_KEY.) You asked: \"{last_user_msg}\". "
-                "I'd love to help once the API key is configured."
+                f"Namaste! I am your AI event planning assistant for Indian celebrations. "
+                f"(AI live responses are in offline demo mode — set GEMINI_API_KEY to activate Gemini). "
+                f"Regarding your query: \"{last_user_msg}\", I can help you plan traditional rituals, "
+                f"Haldi/Sangeet ceremonies, delicious Indian banquet catering, and budget allocations in ₹ INR!"
             )
 
         try:
-            # Build Gemini chat history (all but the last user message)
             history = []
             for msg in messages[:-1]:
                 role = "user" if msg.get("role") == "user" else "model"
                 history.append({"role": role, "parts": [msg["content"]]})
 
             chat_session = model.start_chat(history=history)
-            last_user = messages[-1]["content"] if messages else "Hello"
+            last_user = messages[-1]["content"] if messages else "Namaste"
             full_prompt = f"{system_ctx}\n\nUser: {last_user}"
             response = chat_session.send_message(full_prompt)
             return response.text
         except Exception as exc:
             logger.warning("chat failed: %s", exc)
             return (
-                "I'm sorry, I encountered an error processing your request. "
+                "I apologize, I encountered an issue processing your request. "
                 "Please try again in a moment."
             )
 

@@ -1,4 +1,4 @@
-"""Seed script to populate initial demo user and realistic sample events."""
+"""Seed script to populate initial demo user and realistic Indian sample events."""
 from datetime import datetime, timedelta
 from app.database import SessionLocal, Base, engine
 from app.models.models import (
@@ -25,7 +25,7 @@ def seed_data():
         if not demo_user:
             demo_user = User(
                 email="demo@eventcraft.com",
-                full_name="Alex Morgan",
+                full_name="Aarav Sharma",
                 hashed_password=hash_password("password123"),
             )
             db.add(demo_user)
@@ -33,115 +33,118 @@ def seed_data():
             db.refresh(demo_user)
             print(f"Created demo user: {demo_user.email}")
         else:
-            print(f"Demo user already exists: {demo_user.email}")
-
-        # Check if events already exist
-        existing_events = db.query(Event).filter(Event.owner_id == demo_user.id).count()
-        if existing_events == 0:
-            now = datetime.utcnow()
-
-            # 1. Wedding Event
-            wedding = Event(
-                owner_id=demo_user.id,
-                title="Maya & Leo's Vineyard Wedding",
-                event_type=EventType.wedding,
-                event_date=now + timedelta(days=120),
-                venue="Napa Valley Vista Vineyards",
-                guest_count=120,
-                total_budget=25000.0,
-                description="Romantic rustic vineyard wedding with sunset outdoor ceremony, acoustic trio, wine tasting cocktail hour, and locally sourced 3-course dinner.",
-            )
-            db.add(wedding)
+            demo_user.full_name = "Aarav Sharma"
             db.commit()
-            db.refresh(wedding)
+            print(f"Updated demo user name to Indian format: {demo_user.email}")
 
-            # Wedding Budget Items
-            wedding_budget = [
-                BudgetItem(event_id=wedding.id, category="Venue", name="Vineyard & Terrace Rental", estimated_cost=8000.0, actual_cost=7800.0, paid=True, notes="Paid 50% deposit"),
-                BudgetItem(event_id=wedding.id, category="Catering", name="Farm-to-Table Plated Dinner (120 guests)", estimated_cost=8500.0, actual_cost=8500.0, paid=False, notes="Menu finalized with Chef"),
-                BudgetItem(event_id=wedding.id, category="Photography", name="Full Day Photography + Drone", estimated_cost=3200.0, actual_cost=3000.0, paid=True, notes="Package includes high-res album"),
-                BudgetItem(event_id=wedding.id, category="Entertainment", name="Live Acoustic String Trio & Reception DJ", estimated_cost=2400.0, actual_cost=2400.0, paid=False, notes="Custom song for first dance"),
-                BudgetItem(event_id=wedding.id, category="Decorations", name="Floral Arches, Bouquets & Fairy Lights", estimated_cost=2200.0, actual_cost=2100.0, paid=False, notes="Eucalyptus and ivory roses"),
-            ]
-            db.add_all(wedding_budget)
+        # Delete old events to re-seed with Indian format
+        db.query(Event).filter(Event.owner_id == demo_user.id).delete()
+        db.commit()
 
-            # Wedding Timeline Items
-            wedding_timeline = [
-                TimelineItem(event_id=wedding.id, title="Finalize Tasting Menu with Caterer", description="Sample 3 entrees and wine pairings with Chef", due_date=now + timedelta(days=20), priority=Priority.high, is_completed=True, category="Catering"),
-                TimelineItem(event_id=wedding.id, title="Send Save-the-Dates & Digital RSVPs", description="Mail custom stationery and activate online RSVP page", due_date=now + timedelta(days=40), priority=Priority.high, is_completed=True, category="Stationery"),
-                TimelineItem(event_id=wedding.id, title="Dress & Tuxedo First Fitting", description="Meet bridal tailor for custom alterations", due_date=now + timedelta(days=60), priority=Priority.medium, is_completed=False, category="Attire"),
-                TimelineItem(event_id=wedding.id, title="Confirm Seating Chart & Place Cards", description="Organize table groups based on finalized RSVP headcounts", due_date=now + timedelta(days=90), priority=Priority.medium, is_completed=False, category="Logistics"),
-                TimelineItem(event_id=wedding.id, title="Wedding Rehearsal & Welcome Dinner", description="Practice aisle walk with bridal party at vineyard", due_date=now + timedelta(days=119), priority=Priority.high, is_completed=False, category="Rehearsal"),
-            ]
-            db.add_all(wedding_timeline)
+        now = datetime.now()
 
-            # Wedding Vendors
-            wedding_vendors = [
-                VendorItem(event_id=wedding.id, vendor_type="venue", vendor_name="Vista Napa Vineyards", contact_email="events@vistavineyards.com", contact_phone="707-555-0142", quoted_price=7800.0, status=VendorStatus.confirmed, notes="Ceremony gazebo included"),
-                VendorItem(event_id=wedding.id, vendor_type="catering", vendor_name="Harvest & Flame Culinary", contact_email="chef@harvestflame.com", contact_phone="415-555-0188", quoted_price=8500.0, status=VendorStatus.confirmed, notes="Includes champagne toast"),
-                VendorItem(event_id=wedding.id, vendor_type="photography", vendor_name="Golden Hour Studios", contact_email="sam@goldenhour.photography", contact_phone="510-555-0199", quoted_price=3000.0, status=VendorStatus.confirmed, notes="Contract signed"),
-                VendorItem(event_id=wedding.id, vendor_type="music", vendor_name="SoundWave DJ & Trio", contact_email="booking@soundwave.com", contact_phone="408-555-0133", quoted_price=2400.0, status=VendorStatus.contacted, notes="Awaiting revised contract"),
-                VendorItem(event_id=wedding.id, vendor_type="decoration", vendor_name="Petals & Willow Botanicals", contact_email="orders@petalswillow.com", contact_phone="925-555-0177", quoted_price=2100.0, status=VendorStatus.pending, notes="Initial mood board sent"),
-            ]
-            db.add_all(wedding_vendors)
+        # 1. Indian Wedding (Aarav & Ananya's Royal Udaipur Vivaah)
+        wedding = Event(
+            owner_id=demo_user.id,
+            title="Aarav & Ananya's Royal Udaipur Vivaah",
+            event_type=EventType.wedding,
+            event_date=now + timedelta(days=120),
+            venue="The Oberoi Udaivilas, Lake Pichola, Udaipur, Rajasthan",
+            guest_count=250,
+            total_budget=1800000.0,  # ₹18,00,000
+            description="A 3-day royal destination wedding with traditional Rajasthani Mehendi, high-energy Bollywood Sangeet, sacred Vedic Pheras under a floral Mandap, and a grand reception feast.",
+        )
+        db.add(wedding)
+        db.commit()
+        db.refresh(wedding)
 
-            # Sample AI Chat Message
-            wedding_chat = [
-                ChatMessage(event_id=wedding.id, role=ChatRole.user, content="Can you suggest outdoor lighting arrangements for an evening vineyard reception?"),
-                ChatMessage(event_id=wedding.id, role=ChatRole.assistant, content="For an evening vineyard celebration, warm overhead bistro string lights zig-zagging between the arbor posts create an intimate canopy. Pair this with flickering hurricane lanterns along perimeter wine barrels and low amber uplighting illuminating the vineyard trellises for a magical golden hour transition!"),
-            ]
-            db.add_all(wedding_chat)
+        # Wedding Budget Items (INR ₹)
+        wedding_budget = [
+            BudgetItem(event_id=wedding.id, category="Venue & Lawns", name="Palace Courtyard & Lakeside Mandap Lawn", estimated_cost=550000.0, actual_cost=520000.0, paid=True, notes="Advance booking confirmed"),
+            BudgetItem(event_id=wedding.id, category="Catering & Sweets", name="Royal Rajasthani & North Indian Buffet + Live Chaat & Kulfi", estimated_cost=650000.0, actual_cost=650000.0, paid=False, notes="Menu includes Dal Baati Churma & live Jalebi counter"),
+            BudgetItem(event_id=wedding.id, category="Photography", name="Candid Photography, Cinematic Teaser & Drone", estimated_cost=180000.0, actual_cost=175000.0, paid=True, notes="3-day coverage (Mehendi, Sangeet & Wedding)"),
+            BudgetItem(event_id=wedding.id, category="Decorations & Mandap", name="Marigold & Jasmine Floral Mandap, Fairy Light Canopy", estimated_cost=200000.0, actual_cost=190000.0, paid=False, notes="Yellow Haldi theme & Royal Red Mandap"),
+            BudgetItem(event_id=wedding.id, category="Music & Dhol", name="Punjabi Live Dhol Troupe, Sangeet Sound & Bollywood DJ", estimated_cost=120000.0, actual_cost=120000.0, paid=False, notes="Custom Baraat entry mix"),
+            BudgetItem(event_id=wedding.id, category="Bridal Attire & Mehendi", name="Bridal Mehendi Artist & Sabyasachi Lehengas Trial", estimated_cost=100000.0, actual_cost=95000.0, paid=True, notes="Organic Rajasthani henna for bride & 40 guests"),
+        ]
+        db.add_all(wedding_budget)
 
-            # 2. Birthday Event
-            birthday = Event(
-                owner_id=demo_user.id,
-                title="Liam's 10th Superhero Birthday Party",
-                event_type=EventType.birthday,
-                event_date=now + timedelta(days=25),
-                venue="Skyline Adventure Park & Pavilion",
-                guest_count=35,
-                total_budget=1600.0,
-                description="Action-packed comic book superhero themed birthday party with obstacle course games, custom costume photo booth, and themed cupcakes.",
-            )
-            db.add(birthday)
-            db.commit()
-            db.refresh(birthday)
+        # Wedding Timeline Milestones
+        wedding_timeline = [
+            TimelineItem(event_id=wedding.id, title="Auspicious Muhurat & Lagan Patrika", description="Astrologer confirms ceremony timings; print custom Indian invitation cards with Mithai boxes", due_date=now + timedelta(days=20), priority=Priority.high, is_completed=True, category="Rituals"),
+            TimelineItem(event_id=wedding.id, title="Catering Tasting & Menu Finalization", description="Taste test Chaat counter, Dal Makhani, Paneer Tikka, and dessert varieties with Maharaj", due_date=now + timedelta(days=40), priority=Priority.high, is_completed=True, category="Catering"),
+            TimelineItem(event_id=wedding.id, title="Sangeet Dance Choreography Rehearsals", description="Family flashmob and couple dance practice sessions for the big Bollywood night", due_date=now + timedelta(days=70), priority=Priority.medium, is_completed=False, category="Entertainment"),
+            TimelineItem(event_id=wedding.id, title="Haldi Yellow Décor & Phoolon Ki Holi Setup", description="Yellow marigold decor, brass urlis, and fresh yellow flower petals for Haldi ceremony", due_date=now + timedelta(days=118), priority=Priority.high, is_completed=False, category="Decor"),
+            TimelineItem(event_id=wedding.id, title="Baraat Arrival & Mandap Varmala Ceremony", description="Groom entrance on vintage carriage with Dhol beats followed by Jai Mala on the lake stage", due_date=now + timedelta(days=120), priority=Priority.high, is_completed=False, category="Execution"),
+        ]
+        db.add_all(wedding_timeline)
 
-            birthday_budget = [
-                BudgetItem(event_id=birthday.id, category="Venue", name="Park Pavilion & Bounce Arena", estimated_cost=450.0, actual_cost=450.0, paid=True),
-                BudgetItem(event_id=birthday.id, category="Catering", name="Pizza, Fruit Skewers & Superhero Cake", estimated_cost=500.0, actual_cost=480.0, paid=True),
-                BudgetItem(event_id=birthday.id, category="Entertainment", name="Hero Entertainer & Face Painter (2 hrs)", estimated_cost=350.0, actual_cost=350.0, paid=False),
-                BudgetItem(event_id=birthday.id, category="Decorations", name="Balloon Arch & Comic Backdrop", estimated_cost=200.0, actual_cost=180.0, paid=True),
-            ]
-            db.add_all(birthday_budget)
+        # Wedding Vendors (India)
+        wedding_vendors = [
+            VendorItem(event_id=wedding.id, vendor_type="venue", vendor_name="The Oberoi Udaivilas", contact_email="reservations@oberoi-udaivilas.com", contact_phone="+91 98290 12345", quoted_price=520000.0, status=VendorStatus.confirmed, notes="Lakeside lawn & banquet secured"),
+            VendorItem(event_id=wedding.id, vendor_type="catering", vendor_name="Maharaj Shambhu Royal Caterers", contact_email="info@royalmaharajcaterers.in", contact_phone="+91 98450 67890", quoted_price=650000.0, status=VendorStatus.confirmed, notes="Specializes in Marwari & Mughlai feasts"),
+            VendorItem(event_id=wedding.id, vendor_type="photography", vendor_name="Stories by Joseph Radhik Studios", contact_email="contact@storieswedding.com", contact_phone="+91 99200 11223", quoted_price=175000.0, status=VendorStatus.confirmed, notes="Full 4K cinematic film package"),
+            VendorItem(event_id=wedding.id, vendor_type="music", vendor_name="DJ Chetas Entertainment & Dhol Crew", contact_email="booking@djchetas.in", contact_phone="+91 98111 22334", quoted_price=120000.0, status=VendorStatus.contacted, notes="Contract under review for Baraat + Sangeet"),
+            VendorItem(event_id=wedding.id, vendor_type="decoration", vendor_name="Genda Phool Decorators & Mandap", contact_email="orders@gendaphool.in", contact_phone="+91 97110 55443", quoted_price=190000.0, status=VendorStatus.pending, notes="Jasmine & marigold theme layout received"),
+        ]
+        db.add_all(wedding_vendors)
 
-            # 3. Community Event
-            community = Event(
-                owner_id=demo_user.id,
-                title="Riverside Spring Community Festival",
-                event_type=EventType.community,
-                event_date=now + timedelta(days=50),
-                venue="Riverside Public Waterfront Park",
-                guest_count=450,
-                total_budget=9500.0,
-                description="Annual town celebration featuring 15 artisanal food trucks, live acoustic local bands, children's craft workshops, and environmentally sustainable plant giveaways.",
-            )
-            db.add(community)
-            db.commit()
-            db.refresh(community)
+        # Sample Indian Context AI Chat
+        wedding_chat = [
+            ChatMessage(event_id=wedding.id, role=ChatRole.user, content="Namaste! What are the best ideas for a lakeside Haldi ceremony in Udaipur?"),
+            ChatMessage(event_id=wedding.id, role=ChatRole.assistant, content="Namaste! For a lakeside Haldi ceremony in Udaipur, opt for an all-yellow dress code for guests. Set up low Rajasthani baithak seating with vibrant bandhani cushions and marigold flower hangings. Add a 'Phoolon ki Holi' (flower petal celebration) with brass urlis floating with yellow marigold and rose petals, and serve chilled Masala Chaas and Thandai to keep guests refreshed!"),
+        ]
+        db.add_all(wedding_chat)
 
-            community_budget = [
-                BudgetItem(event_id=community.id, category="Venue", name="City Special Event Permit & Sanitation", estimated_cost=2000.0, actual_cost=2000.0, paid=True),
-                BudgetItem(event_id=community.id, category="Entertainment", name="Mobile Stage, PA System & Audio Tech", estimated_cost=3500.0, actual_cost=3200.0, paid=False),
-                BudgetItem(event_id=community.id, category="Decorations", name="Eco Banners, Wayfinding Signage & Tents", estimated_cost=1800.0, actual_cost=1650.0, paid=True),
-                BudgetItem(event_id=community.id, category="Other", name="Security & First Aid Station", estimated_cost=1500.0, actual_cost=1500.0, paid=False),
-            ]
-            db.add_all(community_budget)
+        # 2. Indian Birthday (Rohan's 1st Birthday & Annaprashan)
+        birthday = Event(
+            owner_id=demo_user.id,
+            title="Rohan's 1st Birthday & Annaprashan Ceremony",
+            event_type=EventType.birthday,
+            event_date=now + timedelta(days=25),
+            venue="Grand Magrath Banquet Hall, MG Road, Bengaluru",
+            guest_count=60,
+            total_budget=85000.0,  # ₹85,000
+            description="Traditional first rice ceremony (Annaprashan) in the morning followed by an evening jungle safari themed 1st birthday party with family and close friends.",
+        )
+        db.add(birthday)
+        db.commit()
+        db.refresh(birthday)
 
-            db.commit()
-            print("Successfully populated demo events with budgets, timelines, vendors, and chat!")
-        else:
-            print("Events already seeded.")
+        birthday_budget = [
+            BudgetItem(event_id=birthday.id, category="Venue", name="Banquet Hall Rental (AC)", estimated_cost=30000.0, actual_cost=30000.0, paid=True, notes="Central Bangalore location"),
+            BudgetItem(event_id=birthday.id, category="Catering", name="South & North Indian Lunch Thali with Payasam & Cake", estimated_cost=32000.0, actual_cost=30000.0, paid=True, notes="60 plates confirmed"),
+            BudgetItem(event_id=birthday.id, category="Decorations", name="Jungle Safari Balloon Garland & Photo Backdrop", estimated_cost=12000.0, actual_cost=11000.0, paid=True, notes="Custom cutouts of baby Rohan"),
+            BudgetItem(event_id=birthday.id, category="Entertainment", name="Puppet Show, Magician & Return Gifts", estimated_cost=11000.0, actual_cost=11000.0, paid=False, notes="Customized storybook return gifts"),
+        ]
+        db.add_all(birthday_budget)
+
+        # 3. Indian Community Event (Greenwood Society Grand Diwali Mela & Dandiya Night)
+        community = Event(
+            owner_id=demo_user.id,
+            title="Greenwood Park Grand Diwali Mela & Dandiya Utsav",
+            event_type=EventType.community,
+            event_date=now + timedelta(days=45),
+            venue="Greenwood Society Clubhouse & Amphitheatre, Whitefield, Bengaluru",
+            guest_count=650,
+            total_budget=350000.0,  # ₹3,50,000
+            description="Grand annual community festival featuring 25 resident artisanal handicraft and food stalls, live Garba and Dandiya Raas with traditional singers, eco-friendly diya painting workshops, and laser light show.",
+        )
+        db.add(community)
+        db.commit()
+        db.refresh(community)
+
+        community_budget = [
+            BudgetItem(event_id=community.id, category="Stage & Shamiana", name="Outdoor Stage, Red Carpet & Shamiana Canopies", estimated_cost=95000.0, actual_cost=90000.0, paid=True),
+            BudgetItem(event_id=community.id, category="Sound & Lighting", name="Line Array Sound System, Fairy Lights & Diya Decor", estimated_cost=80000.0, actual_cost=75000.0, paid=False),
+            BudgetItem(event_id=community.id, category="Food & Refreshments", name="Community Sweets, Samosas, Jalebi & Masala Tea Stalls", estimated_cost=85000.0, actual_cost=85000.0, paid=True),
+            BudgetItem(event_id=community.id, category="Prizes & Security", name="Dandiya Competition Trophies, Security & Cleaning Crew", estimated_cost=55000.0, actual_cost=52000.0, paid=False),
+            BudgetItem(event_id=community.id, category="Pooja & Cultural", name="Lakshmi Pooja Samagri & Pandit Ji Dakshina", estimated_cost=35000.0, actual_cost=35000.0, paid=True),
+        ]
+        db.add_all(community_budget)
+
+        db.commit()
+        print("Successfully seeded Indian celebrations (Weddings, Birthdays, Community Utsavs) in INR (Rs.)!")
 
     except Exception as e:
         db.rollback()

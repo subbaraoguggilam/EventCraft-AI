@@ -286,7 +286,7 @@ export const TimelineTab: React.FC<TimelineTabProps> = ({ eventId, items, onRefr
         <form onSubmit={handleCreateItem} className="space-y-4">
           <Input
             label="Milestone Title"
-            placeholder="e.g. Book DJ, Finalize Guest List, Order Cake"
+            placeholder="e.g. Sangeet Dance Practice, Book Mehendi Artist, Distribute Mithai & Cards"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
