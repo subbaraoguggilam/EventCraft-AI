@@ -55,6 +55,20 @@ EventCraft AI is a full-stack, GenAI-powered planning assistant that helps users
 
 ---
 
+## 🔑 Test & Demo Credentials
+
+For instant evaluation, you can log in with the pre-seeded account containing realistic events, budgets, timelines, and vendor directories:
+
+| Parameter | Value |
+|---|---|
+| **Email** | `demo@eventcraft.com` |
+| **Password** | `password123` |
+| **Preloaded Events** | 💍 Vineyard Wedding, 🎂 Superhero Birthday, 🏘️ Riverside Community Festival |
+
+*(Alternatively, click **"Get Started"** on the website to register any new account instantly!)*
+
+---
+
 ## 🏗️ Architecture
 
 ```
