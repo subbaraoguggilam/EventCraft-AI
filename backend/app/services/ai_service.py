@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 from app.config import settings
@@ -175,7 +175,7 @@ def _fallback_budget(total_budget: float, event_type: str) -> List[Dict[str, Any
 
 
 def _fallback_timeline(event_date: Optional[datetime], event_type: str) -> List[Dict[str, Any]]:
-    base = event_date or datetime.utcnow() + timedelta(days=90)
+    base = event_date or (datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=90))
     items = [
         (90, "Muhurat & Date Finalization", "Finalize auspicious date with family and astrologer", "high", "Planning"),
         (75, "Book Venue & Banquet Lawn", "Reserve venue in Udaipur / Jaipur / Bangalore / Mumbai", "high", "Venue"),

@@ -19,20 +19,74 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'md',
 }) => {
   const modalRef = useRef<HTMLDivElement>(null)
+  const previousActiveElement = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
+    if (!isOpen) return
+
+    // Save previously focused element to restore on close
+    previousActiveElement.current = document.activeElement as HTMLElement
+
+    // Auto-focus first focusable element in the modal
+    const focusableElementsSelector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    
+    const timeoutId = setTimeout(() => {
+      if (modalRef.current) {
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(focusableElementsSelector)
+        if (focusables.length > 0) {
+          focusables[0].focus()
+        }
+      }
+    }, 50)
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
         onClose()
+        return
+      }
+
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusables = Array.from(
+          modalRef.current.querySelectorAll<HTMLElement>(focusableElementsSelector)
+        ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null)
+
+        if (focusables.length === 0) {
+          e.preventDefault()
+          return
+        }
+
+        const firstElement = focusables[0]
+        const lastElement = focusables[focusables.length - 1]
+
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement.focus()
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement.focus()
+          }
+        }
       }
     }
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-      window.addEventListener('keydown', handleKeyDown)
-    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
     return () => {
+      clearTimeout(timeoutId)
       document.body.style.overflow = 'unset'
       window.removeEventListener('keydown', handleKeyDown)
+      // Restore focus
+      if (previousActiveElement.current && typeof previousActiveElement.current.focus === 'function') {
+        previousActiveElement.current.focus()
+      }
     }
   }, [isOpen, onClose])
 

@@ -7,11 +7,14 @@ from dotenv import load_dotenv
 # Load .env file if present
 load_dotenv()
 
+# Default cryptographically secure fallback secret
+DEFAULT_SECURE_SECRET = "ec9b4d8f1e2a3c7b6d5e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c"
+
 try:
     from pydantic_settings import BaseSettings, SettingsConfigDict
 
     class Settings(BaseSettings):
-        SECRET_KEY: str = "your-secret-key-change-in-production"
+        SECRET_KEY: str = os.getenv("SECRET_KEY", DEFAULT_SECURE_SECRET)
         ALGORITHM: str = "HS256"
         ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
 
@@ -30,7 +33,7 @@ except ImportError:
     from pydantic import BaseModel
 
     class Settings(BaseModel):
-        SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+        SECRET_KEY: str = os.getenv("SECRET_KEY", DEFAULT_SECURE_SECRET)
         ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
         ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(60 * 24)))
 
